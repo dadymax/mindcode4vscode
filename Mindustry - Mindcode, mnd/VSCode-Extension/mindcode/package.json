@@ -8,7 +8,8 @@
     },
     "categories": [
         "Programming Languages"
-    ],
+     "Themes"
+   ],
     "contributes": {
         "languages": [{
             "id": "mindcode",
@@ -20,6 +21,14 @@
             "language": "mindcode",
             "scopeName": "source.mindcode",
             "path": "./syntaxes/mindcode.plist"
-        }]
+        }],
+		"themes": [
+		  {
+			"id": "Default Dark+ Mindcode",
+			"label": "%darkPlusColorThemeLabel%",
+			"uiTheme": "vs-dark-mindcode",
+			"path": "./themes/dark_plus_mindcode.json"
+		  }]
     }
 }
+
