@@ -20,8 +20,8 @@
 ##
 ################################################################
 
-name				   = mindcode
-file_extensions []	   = mnd, mindcode;
+name					= mindcode
+file_extensions[]		= mnd, mindcode;
 textmate_compatible		= true
 
 
@@ -30,32 +30,25 @@ textmate_compatible		= true
 ################################################################
 
 // Konstanten
-__CONST			  \= (\b[_]?[A-Z][A-Z0-9_]*\b)
+__CONST					\= (\b[_]?[A-Z][A-Z0-9_]*\b)
 
 // Variablen
-// Bereinigen:
-// __Variable		 \= \b[_]?[A-Za-z][A-Za-z0-9_]*\b
-// __Variable				\= \b_?(?:[\w\d])+\b
 __Variable				\= \b_?(?:\w[\w\d]*)\b
 __FuncName				\= \b_?(?:\w[\w\d]*)\b
 
 // Name.Property
-// __qualifiedName	  \= \w+(?:(?:\.|\$)\w+)*
-__qualifiedName	  \= \w+(?:(?:\.|\$)\w+)+
-__commonModifier	\= \bclass\b|\binterface\b|\benum\b|\bannotation\b
+// __qualifiedName		\= \w+(?:(?:\.|\$)\w+)*
+//__qualifiedName		\= \w+(?:(?:\.|\$)\w+)+
+__qualifiedName			\= $${__Variable}\.$${__Variable}
+__commonModifier		\= \bclass\b|\binterface\b|\benum\b|\bannotation\b
 
 
-// Bereinigen:
-// __operators		\= #|\*|&|\?|\*|\+|(===)|(==)|=|&|!|(=>)|(->)|(\+=)|(\?=)|(\.\.)|(\->)|<|>|\||(\|\|)
-__operators		\= \*|&&|\*|\+|(===)|(==)|=|!|(>=)|(!=)|(\+=)|(\-=)|<|>|(\|\|)
+__logicOps				\= !|(&&)|(\|\|)|(and)|(or)
+__compareOps			\= (!=)|(===)|(==)|(<=)|(>=)|<|>
+__arithmeticOps			\= \*|\+|\-|\\|(\+=)|(\-=)|(\*=)|(\\=)
+__assignementOps		\= =
 
-__logicOps			\= !|(&&)|(\|\|)|(and)|(or)
-__comparesOps		\= (===)|(==)|=|(<=)|(>=)|<|>
-__arithmeticOps		\= \*|\+|\-|\\|(\+=)|(\-=)
-__assignementOps	\= =
-
-
-__methodDecl		\= \bdef\b
+__methodDecl			\= \bdef\b
 
 
 
@@ -173,6 +166,7 @@ styles [] {
    pygments_scope		 = Keyword.Reserved
 }
 
+
 # operator — operators can either be textual (e.g. or) or be characters.
 .keyword_operator : style {
    color				 = violet_red
@@ -181,6 +175,38 @@ styles [] {
    textmate_scope		 = keyword.operator
    pygments_scope		 = Operator
 }
+
+// https://www.sublimetext.com/docs/3/scope_naming.html
+# keyword.operator.assignment
+.keyword_operator_assignment : style {
+   color				   = #f20
+   bold					 = true
+   ace_scope			 = keyword.operator.assignment
+   textmate_scope		 = keyword.operator.assignment
+   pygments_scope		 = Operator
+}
+
+
+# keyword.operator.arithmetic
+.keyword_operator_arithmetic : style {
+   color				   = #d07
+   bold					 = true
+   ace_scope			 = keyword.operator.arithmetic
+   textmate_scope		 = keyword.operator.arithmetic
+   pygments_scope		 = Operator
+}
+
+
+# keyword.operator.logical
+.keyword_operator_logical : style {
+   color				   = #099
+   bold					 = true
+   ace_scope			 = keyword.operator.logical
+   textmate_scope		 = keyword.operator.logical
+   pygments_scope		 = Operator
+}
+
+
 
 # other — other keywords.
 .keyword_other : style {
@@ -250,6 +276,15 @@ styles [] {
    textmate_scope		 = variable
    pygments_scope		 = Name.Variable
 }
+
+# Object.Property
+.qualifiedName : style {
+   color				 = #960
+   ace_scope			 = variable
+   textmate_scope		 = variable
+   pygments_scope		 = Name.Variable
+}
+
 
 # parameter — when the variable is declared as the parameter.
 .variable_parameter : style {
@@ -361,27 +396,7 @@ TypeDecl: context {
 		styles []		  = .storage_type, .whitespace, .entity_type;
 	}
    
-	: include "InheritedDecl";
-	: include "ImplementsDecl";
 	: include "BracedTypeBody";
-}
-
-
-InheritedDecl: context {
-   : pattern {
-	  regex		  \= (\bextends\b)(\s+)($${__qualifiedName})
-	  styles []	   = .keyword_other, .whitespace, .entity_inherited_class ; 
-   }
-}
-
-
-ImplementsDecl: context {
-   : pattern {
-	  regex		  \= (\bimplements\b)
-	  styles []	   = .keyword_other ; 
-   }
-   : include "Punctuation";
-   : include "QualifiedName";
 }
 
 
@@ -424,34 +439,35 @@ FieldOrVarDecl: context {
 	}
 	: pattern {
 		regex		  \= ($${__Variable}(?=\s*=))
-		styles []	   = .variable; 
+		styles []	   = .variable;
 	}
 
 	// Mindustry Spielobjekt?
 	// @...
 	: pattern {
 		regex		  \= (@$${__Variable})
-		styles []	   = .support_type; 
+		styles []	   = .support_type;
 	}
 
 	: pattern {
 		regex		  \= ($${__Variable})
-		styles []	   = .variable;  // .invalid_illegal;
+		styles []	   = .variable;	 // .invalid_illegal;
 	}
 
 	// would be nice, but too gernic, covers too keywords in Template expressions 
 	//	 : pattern {
 	//		regex		\= ($${__qualifiedName})(\s+)($${__Variable}(?!\s*\())
-	//		styles []	 = .entity_name, .whitespace, .variable; 
+	//		styles []	 = .entity_name, .whitespace, .variable;
 	//	 }
 }
+
 
 // Alias: Function Declaration
 MethodDecl: context {
 	// matches: ReturnType Func (
 	: pattern {
 		regex		\= ($${__methodDecl})(\s+)($${__FuncName}(?=\())
-		styles []	 = .keyword_other, .whitespace, .entity_function; 
+		styles []	 = .keyword_other, .whitespace, .entity_function;
 	}
 
 	: include "Parameters";
@@ -464,7 +480,7 @@ MethodCall: context {
 	// matches: ReturnType Func (
 	: pattern {
 		regex		\= ($${__FuncName}(?=\())
-		styles []	 = .entity_function; 
+		styles []	 = .entity_function;
 	}
 
 	: include "Parameters";
@@ -480,7 +496,7 @@ Expression: context {
 	: include "MethodCall";
 	
 	: include "Punctuation";
-	: include "StringOrTemplateString";
+	: include "String";
 	: include "BracedExpression";
 	: include "ParenthesizedExpression";
 	: include "BracketizedExpression";
@@ -525,7 +541,7 @@ BracketizedExpression: context {
 	  }
 	  : pattern {
 		 regex		 \= (\bit\b)
-		 styles []	  = .keyword ; 
+		 styles []	  = .keyword ;
 	  }
 	  : include "Expression";
    }
@@ -535,14 +551,50 @@ BracketizedExpression: context {
 ExpressionKeywords: context {
 	: pattern {
 		regex		  \= (\bwhile\b|\bif\b|\belse\b|\bcase\b|\bwhen\b|\bfor\b|\b\.\.\b|\b\.\.\.\b|\bend\b|\b==\b)
-		styles []	   = .keyword_control ; 
+		styles []	   = .keyword_control ;
 	}
 	: pattern {
 		regex		  \= (\btrue\b|\bfalse\b|\bnull\b)
-		styles []	   = .constant_language ; 
+		styles []	   = .constant_language ;
 	}
 	: include "Number";
-	: include "FieldOrVarDecl";
+	// : include "FieldOrVarDecl";
+}
+
+
+//	: include "LogicExpression";
+LogicExpression: context {
+	: include "ExpressionKeywords";
+	: include "Number";
+	: include "Variable";
+	: include "Operators";
+	: include "Variable";
+	: include "Number";
+}
+
+
+Variable: context {
+	// CONST
+	: pattern {
+		regex		  \= ($${__CONST})
+		styles []	   = .constant_var;
+	}
+	// @xxx
+	: pattern {
+		regex		  \= (@$${__Variable})
+		styles []	   = .support_type;
+	}
+	// Variable
+	: pattern {
+		regex		  \= ($${__Variable})
+		styles []	   = .variable;
+	}
+	// Mindustry Spielobjekt
+	// @...
+	: pattern {
+		regex		  \= ($${__qualifiedName})
+		styles []	   = .support_type;
+	}
 }
 
 
@@ -564,10 +616,16 @@ Parameters: context {
 			styles []	  = .parenthesis;
 		}
 		
+		// matches: Object.Property
+		: pattern {
+			regex		 \= (\s*)($${__qualifiedName})
+			styles []	  = .whitespace, .qualifiedName;
+		}
+
 		// matches: Variablename
 		: pattern {
 			regex		 \= (\s*)($${__Variable})
-			styles []	  = .whitespace, .variable; 
+			styles []	  = .whitespace, .variable;
 		}
 		: include "Punctuation";
    }
@@ -584,8 +642,20 @@ Punctuation: context {
 
 Operators: context {
    : pattern { 
-	  regex		  \= ($${__operators})
-	  styles []	   = .keyword_operator ;
+	  regex		  \= ($${__compareOps})
+	  styles []	   = .keyword_operator_logical ;
+   }
+   : pattern { 
+	  regex		  \= ($${__logicOps})
+	  styles []	   = .keyword_operator_logical ;
+   }
+   : pattern { 
+	  regex		  \= ($${__arithmeticOps})
+	  styles []	   = .keyword_operator_arithmetic ;
+   }
+   : pattern { 
+	  regex		  \= ($${__assignementOps})
+	  styles []	   = .keyword_operator_assignment ;
    }
 }
 
@@ -657,9 +727,6 @@ String : context {
 }
 
 
-StringOrTemplateString: context {
-   :include "String";
-}
 
 
 }
