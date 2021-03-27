@@ -33,15 +33,11 @@ textmate_compatible		= true
 __CONST					\= (\b[_]?[A-Z][A-Z0-9_]*\b)
 
 // Variablen
-__Variable				\= \b_?(?:\w[\w\d]*)\b
-__FuncName				\= \b_?(?:\w[\w\d]*)\b
+__Variable				\= \b_?(?:[a-zA-Z][\w]*)\b
+__FuncName				\= \b_?(?:[a-zA-Z][\w]*)\b
 
 // Name.Property
-// __qualifiedName		\= \w+(?:(?:\.|\$)\w+)*
-//__qualifiedName		\= \w+(?:(?:\.|\$)\w+)+
 __qualifiedName			\= $${__Variable}\.$${__Variable}
-__commonModifier		\= \bclass\b|\binterface\b|\benum\b|\bannotation\b
-
 
 __logicOps				\= !|(&&)|(\|\|)|(and)|(or)
 __compareOps			\= (!=)|(===)|(==)|(<=)|(>=)|<|>
@@ -277,11 +273,12 @@ styles [] {
    pygments_scope		 = Name.Variable
 }
 
+
 # Object.Property
 .qualifiedName : style {
    color				 = #960
-   ace_scope			 = variable
-   textmate_scope		 = variable
+   ace_scope			 = variable.other.member
+   textmate_scope		 = variable.other.member
    pygments_scope		 = Name.Variable
 }
 
@@ -363,14 +360,13 @@ File: context {
 	// aufräumen
 	// : include "Type" ;
 	: include "MethodOrFieldDecl";
-
+	: include "LogicExpression";
 	: include "Punctuation" ;
 }
 
 
 // For Mindustry / mindcode
 AllocateSection: context {
-	// : include "TypeMember";
 	: pattern {
 		regex			 \= (\ballocate\b)(\s*)(?:\b(stack in|heap in)\b)(\s*)($${__Variable})
 		styles []		  = .keyword_other, .whitespace, .keyword_other, .whitespace, .entity_name;
@@ -379,46 +375,25 @@ AllocateSection: context {
 
 
 Type: context {
-	// Not used for mindcode, but it does not interfere
+	// Not used for mindcode, but it does not interfere:
 	: include "MultiLineComment" ;
 	: include "SingleLineComment" ;
 
-	: include "TypeDecl";
-
 	: include "BracedTypeBody";
 }
 
 
-// Typen-Deklarationen
-TypeDecl: context {
-	: pattern {
-		regex			 \= ($${__commonModifier})(\s+)($${__Variable})
-		styles []		  = .storage_type, .whitespace, .entity_type;
-	}
-   
-	: include "BracedTypeBody";
-}
-
-
+// { … }
 BracedTypeBody: context {
    : inline_push {
 	  regex			 \= (\{)
 	  styles []		  = .parenthesis;
+	  default_style	  = .parenthesis
 	  : pop {
 		 regex		 \= (\})
 		 styles []	  = .parenthesis;
 	  }
-	  : include "TypeMember";
    }
-}
-
-
-TypeMember: context {
-   : include "MultiLineComment" ;
-   : include "SingleLineComment" ;
-
-   : include "MethodOrFieldDecl";
-   : include "Type";
 }
 
 
@@ -432,6 +407,7 @@ MethodOrFieldDecl: context {
 FieldOrVarDecl: context {
 
 	: include "MethodCall";
+	: include "Variable";
 
 	: pattern {
 		regex		  \= ($${__CONST}(?=\s*=))
@@ -445,14 +421,16 @@ FieldOrVarDecl: context {
 	// Mindustry Spielobjekt?
 	// @...
 	: pattern {
-		regex		  \= (@$${__Variable})
+		regex		  \= (@$${__Variable}(?=\s*=))
 		styles []	   = .support_type;
 	}
 
+	/*
 	: pattern {
 		regex		  \= ($${__Variable})
 		styles []	   = .variable;	 // .invalid_illegal;
 	}
+	*/
 
 	// would be nice, but too gernic, covers too keywords in Template expressions 
 	//	 : pattern {
@@ -504,6 +482,7 @@ Expression: context {
 }
 
 
+// { … }
 BracedExpression:  context {
    : inline_push {
 	  regex			 \= (\{)
@@ -518,6 +497,7 @@ BracedExpression:  context {
 }
 
 
+// ( … )
 ParenthesizedExpression: context {
    : inline_push {
 	  regex			 \= (\()
@@ -531,6 +511,7 @@ ParenthesizedExpression: context {
 }
 
 
+// [ … ]
 BracketizedExpression: context {
    : inline_push {
 	  regex			 \= (\[)
@@ -568,8 +549,6 @@ LogicExpression: context {
 	: include "Number";
 	: include "Variable";
 	: include "Operators";
-	: include "Variable";
-	: include "Number";
 }
 
 
@@ -600,7 +579,8 @@ Variable: context {
 
 Number: context {
    : pattern { 
-	  regex		  \= ((?:0x[\dABCDEFabcdef]+[Ll]?)|\d+\.?\d]*[LlFfdD]?)
+	  // regex		  \= ((?:0x[\dABCDEFabcdef]+[Ll]?)|\d+(\.?\d)*[LlFfdD]?)
+	  regex		  \= (?:0x[\dABCDEFabcdef]+[Ll]?)|(?:(?:\+|-)?(?:\d+)(?:(?:\.)\d+)?[LlFfdD]?)
 	  styles []	   = .constant_numeric ;
    }
 }
@@ -615,6 +595,10 @@ Parameters: context {
 			regex		 \= (\))
 			styles []	  = .parenthesis;
 		}
+		
+		: include "Number";
+		: include "String";
+		: include "Variable";
 		
 		// matches: Object.Property
 		: pattern {
@@ -704,6 +688,7 @@ MultiLineComment : context {
 }
 
 
+// "string"
 String : context {
    description		 = quoted string
    : inline_push {
@@ -725,8 +710,6 @@ String : context {
 	  }
    }
 }
-
-
 
 
 }
