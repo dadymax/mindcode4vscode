@@ -27,21 +27,25 @@
 ##
 ################################################################
 
-name                   = mysample
-file_extensions []     = mysample;
+name                   = mindcode
+file_extensions []     = mnd, mindcode;
+textmate_compatible     = true
 
 ################################################################
 ## Constants
 ################################################################
 
-__CONST \= (\b[A-Z][A-Z0-9_]*)
+// Konstanten
+__CONST \= (\b[_]?[A-Z][A-Z0-9_]*\b)
 
-__Variable \= (\b[A-Za-z][A-Za-z0-9_]*)
+// Variablen
+__Variable \= (\b[_]?[A-Za-z][A-Za-z0-9_]*\b)
 
 
 ################################################################
 ## Styles
 ################################################################
+
 
 styles [] {
 
@@ -56,9 +60,75 @@ styles [] {
 .keyword : style {
    color                 = cyan
    ace_scope             = keyword
+   textmate_scope        = keyword.control
+   pygments_scope        = Keyword
+}
+
+
+// true, false, null
+.constLng : style {
+   color                 = yellow
+   ace_scope             = keyword
+   textmate_scope        = constant.language
+   pygments_scope        = Keyword
+}
+
+
+.heapStack : style {
+   color                 = yellow
+   italic                = true
+   ace_scope             = keyword
+   textmate_scope        = storage.type
+   pygments_scope        = Keyword
+}
+
+
+
+// Operatoren
+.operator : style {
+   color                 = violet
+   ace_scope             = keyword
+   textmate_scope        = keyword.operator
+   pygments_scope        = Keyword
+}
+
+
+// Funktions-Name
+.fnctName : style {
+   color                 = yellow
+   bold                  = true
+   ace_scope             = keyword
+   textmate_scope        = entity.name.function
+   pygments_scope        = Keyword
+}
+
+
+
+// Objekt-Property
+.objProperty : style {
+   color                 = cyan
+   bold                  = true
+   ace_scope             = keyword
+   textmate_scope        = entity.name.function
+   pygments_scope        = Keyword
+}
+
+// Variablen
+.variable : style {
+   color                 = pink
+   bold                  = true
+   ace_scope             = keyword
+   textmate_scope        = entity.name.function
+   pygments_scope        = Keyword
+}
+
+.ressourceRef : style {
+   color                 = purple
+   ace_scope             = keyword
    textmate_scope        = keyword
    pygments_scope        = Keyword
 }
+
 
 .const : style {
    color                 = orange
@@ -80,6 +150,31 @@ styles [] {
    textmate_scope        = punctuation
    pygments_scope        = Punctuation
 }
+
+.assign1 : style {
+   color                 = light_blue
+   ace_scope             = punctuation
+   textmate_scope        = punctuation
+   pygments_scope        = Punctuation
+}
+
+.assign2 : style {
+   color                 = light_blue
+   bold                  = true
+   ace_scope             = punctuation
+   textmate_scope        = punctuation
+   pygments_scope        = Punctuation
+}
+
+.assign3 : style {
+   color                 = light_blue
+   italic                = true
+   bold                  = true
+   ace_scope             = punctuation
+   textmate_scope        = punctuation
+   pygments_scope        = Punctuation
+}
+
 
 .text : style {
    color                 = brown
@@ -110,11 +205,33 @@ contexts [] {
 
 main : context {
 
+   // referenziert Mindustry Game-Objekte
    : pattern {
-      regex          \= (group|execute|print)
-      styles []       = .keyword;
+      regex          \= (@[a-z-]+)
+      styles []       = .ressourceRef;
    }
-   
+
+//   // def: Funktions-Name
+//   : pattern {
+//      regex          \= (\b(def)\s+([a-zA-Z_$]\w*)?\s*(\()(?:.*?)(\)))
+//      styles []       = .fnctName;
+//   }
+
+   : include "function_definition";
+
+
+// xxxxxx
+
+   : include "defaultSyntax";
+
+
+   // allocate stack, heap
+   : pattern {
+      regex          \= (allocate|stack in|heap in)
+      styles []       = .heapStack;
+   }
+
+
    : pattern {
       regex          \= $${__CONST}
       styles []       = .const;
@@ -122,8 +239,24 @@ main : context {
 
    : pattern {
       regex          \= $${__Variable}
-      styles []       = .keyword;
+      styles []       = .variable;
    }
+
+   : pattern {
+      regex          \= (=)
+      styles []       = .assign1;
+   }
+
+   : pattern {
+      regex          \= (==)
+      styles []       = .assign2;
+   }
+
+   : pattern {
+      regex          \= (===)
+      styles []       = .assign3;
+   }
+
 
    
    : include "numeric" ;
@@ -185,9 +318,26 @@ main : context {
 ## End of Contexts
 #################################################
 
-###########################################
+
+/*
+
+   push
+      which does the job of pattern 
+      but also pushes new context onto the stack. 
+      Different regexes will be defined to apply in each context.
+      
+   pop 
+      which also works like pattern 
+         but the pops the current context from the stack
+
+   inline_push
+      allows you to specify something like “anonymous context”, 
+      living only in that one rule.
+
+*/
+
+
 ## Numeric Context
-###########################################
 
 numeric : context {
    : pattern {
@@ -196,9 +346,7 @@ numeric : context {
    }
 }
 
-###########################################
 ## Multi Line Comment Context
-###########################################
 
 multi_line_comment : context {
    description        = multiline
@@ -212,5 +360,100 @@ multi_line_comment : context {
       }
    }
 }
+
+
+defaultSyntax : context {
+   : pattern {
+      regex          \= (if|then|end|while|for)
+      styles []       = .keyword;
+   }
+
+   : pattern {
+      regex          \= (true|false|null)
+      styles []       = .constLng;
+   }
+
+   // Operatoren
+   : pattern {
+      // ===|==
+      // Ternary \?\:|
+      regex          \= (!|\*|\-|\+|\+|=|!=|<=|>=|<>|<|>|!|&&|\|\||\*=|\+=|\-=)
+      styles []       = .operator;
+   }
+
+
+   : pattern {
+      regex          \= ($${__Variable}\.$${__Variable})
+      styles []       = .objProperty;
+   }
+
+}
+
+
+
+function_definition : context {
+   // style zum debuggen: illegal
+   // def functionName(params) … end
+   : inline_push  {
+      // match 'def' in: def functionName(params) … end
+      regex          \= (\b(def)\s+)
+      styles []       = .keyword;
+
+      : pop {
+         // match 'end' in: def functionName(params) … end
+         regex       \= (end)
+         styles []    = .keyword;
+      }
+
+      : pattern {
+         // match 'functionName' in: def functionName(params) … end
+         regex    \= (([a-zA-Z_$]\w*)\s*(\())
+         styles [] = .fnctName;
+      }      
+
+/*
+      : pattern {
+         // match 'params' in: def functionName(params) … end
+         // regex    \= (([a-zA-Z_$]\w*)(,\s*([a-zA-Z_$]\w*)))
+         // regex    \= ([a-zA-Z_$]\w*)
+         regex    \= ([^\)]+)
+         styles [] = .illegal;
+      }      
+*/
+
+      : pattern {
+         // match 'params' in: def functionName(params) … end
+         // regex    \= (([a-zA-Z_$]\w*)(,\s*([a-zA-Z_$]\w*)))
+         // regex    \= ([a-zA-Z_$]\w*)
+         regex    \= ([\)])
+         styles [] = .fnctName;
+      }      
+
+
+      
+/*      
+   : pattern {
+      regex          \= (if|then|end|while|for)
+      styles []       = .keyword;
+   }
+
+      : pattern {
+         // alles nach dem Functionname bis vors Ende
+         regex          \= ([^\)]+)
+         styles [] = .variable;
+      }      
+      : pattern {
+         // )
+         //  \= (\b(def)\s+([a-zA-Z_$]\w*)?\s*(\()(?:.*?)(\)))
+         regex          \= ((\)))
+         styles [] = .illegal;
+      }      
+*/
+
+   }
+}
+
    
 }
+
+
