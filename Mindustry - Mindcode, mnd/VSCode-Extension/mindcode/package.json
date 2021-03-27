@@ -1,0 +1,25 @@
+{
+    "name": "mindcode",
+    "displayName": "Mindcode",
+    "description": "Mindcode Syntax for the Mindustry Game Language Compiler",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.54.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "mindcode",
+            "aliases": ["Mindcode", "mindcode"],
+            "extensions": [".mnd",".mindcode"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "mindcode",
+            "scopeName": "source.mindcode",
+            "path": "./syntaxes/mindcode.tmLanguage.json"
+        }]
+    }
+}

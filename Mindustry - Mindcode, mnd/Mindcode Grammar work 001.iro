@@ -1,0 +1,665 @@
+#################################################################
+## Iro
+################################################################ 
+##
+## * Press Ctrl + '+'/'-' To Zoom in
+## * Press Ctrl + S to save and recalculate... 
+## * Documents are saved to web storage.
+## * Only one save slot supported.
+## * Matches cannot span lines.
+## * Unicode chars must be defined in \u0000 to \uffff format.
+## * All matches must be contained by a single group ( ... )
+## * Look behinds not permitted, (?<= or (?<!
+## * Look forwards are permitted (?= or (?!
+## * Constants are defined as __my_const = (......)
+## * The \= format allows unescaped regular expressions
+## * Constants referenced by match \= $${__my_const}
+## * Constants can reference other constants
+## * You are free to delete all the default scopes.
+## * Twitter : ainslec , Web: http://eeyo.io/iro
+##
+################################################################
+
+name				   = mindcode
+file_extensions []	   = mnd, mindcode;
+textmate_compatible		= true
+
+
+################################################################
+## Constants
+################################################################
+
+// Konstanten
+__CONST			  \= (\b[_]?[A-Z][A-Z0-9_]*\b)
+
+// Variablen
+// Bereinigen:
+// __Variable		 \= \b[_]?[A-Za-z][A-Za-z0-9_]*\b
+// __Variable				\= \b_?(?:[\w\d])+\b
+__Variable				\= \b_?(?:\w[\w\d]*)\b
+__FuncName				\= \b_?(?:\w[\w\d]*)\b
+
+// Name.Property
+// __qualifiedName	  \= \w+(?:(?:\.|\$)\w+)*
+__qualifiedName	  \= \w+(?:(?:\.|\$)\w+)+
+__commonModifier	\= \bclass\b|\binterface\b|\benum\b|\bannotation\b
+
+
+// Bereinigen:
+// __operators		\= #|\*|&|\?|\*|\+|(===)|(==)|=|&|!|(=>)|(->)|(\+=)|(\?=)|(\.\.)|(\->)|<|>|\||(\|\|)
+__operators		\= \*|&&|\*|\+|(===)|(==)|=|!|(>=)|(!=)|(\+=)|(\-=)|<|>|(\|\|)
+
+__logicOps			\= !|(&&)|(\|\|)|(and)|(or)
+__comparesOps		\= (===)|(==)|=|(<=)|(>=)|<|>
+__arithmeticOps		\= \*|\+|\-|\\|(\+=)|(\-=)
+__assignementOps	\= =
+
+
+__methodDecl		\= \bdef\b
+
+
+
+################################################################
+## Styles
+################################################################
+
+styles [] {
+
+# textmate focused scopes
+
+# comment — for comments.
+
+# // comment
+.comment_line_double_slash : style {
+   color				 = light_green
+   italic				 = true
+   ace_scope			 = comment.line.double-slash
+   textmate_scope		 = comment.line.double-slash
+   pygments_scope		 = Comment.Single
+}
+
+# block — multi-line comments like /* … */ and <!-- … -->. 
+.comment_block : style {
+   color				 = green
+   italic				 = true
+   ace_scope			 = comment.block
+   textmate_scope		 = comment.block
+   pygments_scope		 = Comment.Multiline
+}
+
+# Const Variable
+.constant_var : style {
+   color				 = light_yellow
+   ace_scope			 = variable
+   textmate_scope		 = Name.Variable.Global
+   pygments_scope		 = Name.Variable.Global
+}
+
+# numeric — those which represent numbers, e.g. 42, 1.3f, 0x4AB1U.
+.constant_numeric : style {
+   color				 = red
+   ace_scope			 = constant.numeric
+   textmate_scope		 = constant.numeric
+   pygments_scope		 = Number
+}
+
+
+# language — constants (generally) provided by the language which are “special” like true, false, nil, YES, NO, etc.
+.constant_language : style {
+   color				 = violet_red
+   ace_scope			 = constant.language
+   textmate_scope		 = constant.language
+   pygments_scope		 = Literal
+}
+
+# entity — an entity refers to a larger part of the document, for example a chapter, class, function, or tag. We do not scope the entire entity as entity.* (we use meta.* for that). But we do use entity.* for the “placeholders” in the larger entity, e.g. if the entity is a chapter, we would use entity.name.section for the chapter title.
+
+# name — we are naming the larger entity.
+.entity_name : style {
+   color				 = light_yellow
+   ace_scope			 = entity.name
+   textmate_scope		 = entity.name
+   pygments_scope		 = Name
+}
+
+# function — the name of a function.
+.entity_function : style {
+   color				 = light_yellow
+   ace_scope			 = entity.name.function
+   textmate_scope		 = entity.name.function
+   pygments_scope		 = Name.Function
+}
+
+# type — the name of a type declaration or class.
+.entity_type : style {
+   color				 = light_yellow
+   ace_scope			 = entity.name.type
+   textmate_scope		 = entity.name.type
+   pygments_scope		 = Name.Class
+}
+
+# section — the name is the name of a section/heading.
+.entity_section : style {
+   color				 = light_yellow
+   ace_scope			 = entity.name.section
+   textmate_scope		 = entity.name.section
+   pygments_scope		 = Name.Namespace
+}
+
+# inherited-class — the superclass/baseclass name.
+.entity_inherited_class : style {
+   color				 = light_yellow
+   ace_scope			 = entity.inherited-class
+   textmate_scope		 = entity.inherited-class
+   pygments_scope		 = Name.Variable.Class
+}
+
+
+# keyword — keywords (when these do not fall into the other groups).
+.keyword : style {
+   color				 = violet_red
+   bold					 = true
+   ace_scope			 = keyword
+   textmate_scope		 = keyword
+   pygments_scope		 = Keyword
+}
+
+# control — mainly related to flow control like continue, while, return, etc.
+.keyword_control : style {
+   color				 = violet_red
+   bold					 = true
+   ace_scope			 = keyword.control
+   textmate_scope		 = keyword.control
+   pygments_scope		 = Keyword.Reserved
+}
+
+# operator — operators can either be textual (e.g. or) or be characters.
+.keyword_operator : style {
+   color				 = violet_red
+   bold					 = true
+   ace_scope			 = keyword.operator
+   textmate_scope		 = keyword.operator
+   pygments_scope		 = Operator
+}
+
+# other — other keywords.
+.keyword_other : style {
+   color				 = violet_red
+   bold					 = true
+   ace_scope			 = keyword.other
+   textmate_scope		 = keyword.other
+   pygments_scope		 = Keyword.Pseudo
+}
+
+# storage — things relating to “storage”.
+
+# type — the type of something, class, function, int, var, etc.
+.storage_type : style {
+   color				 = violet_red
+   ace_scope			 = comment
+   textmate_scope		 = storage.type
+   pygments_scope		 = Keyword.Type
+}
+
+# modifier — a storage modifier like static, final, abstract, etc.
+.storage_modifier : style {
+   color				 = violet_red
+   ace_scope			 = storage.modifier
+   textmate_scope		 = storage.modifier
+   pygments_scope		 = Keyword.Declaration
+}
+
+# single — single quoted strings: 'foo'.
+.string_quoted_single : style {
+   color				 = light_blue
+   ace_scope			 = string.quoted.single
+   textmate_scope		 = string.quoted.single
+   pygments_scope		 = String.Single
+}
+
+# double — double quoted strings: "foo".
+.string_quoted_double : style {
+   color				 = light_blue
+   ace_scope			 = string.quoted.double
+   textmate_scope		 = string.quoted.double
+   pygments_scope		 = String.Double
+}
+
+# triple — triple quoted strings: """Python""".
+.string_quoted_triple : style {
+   color				 = light_blue
+   ace_scope			 = string.quoted.triple
+   textmate_scope		 = string.quoted.triple
+   pygments_scope		 = String.Symbol
+}
+
+# support — things provided by a framework or library should be below support.
+
+# type — types provided by the framework/library, this is probably only used for languages derived from C, which has typedef (and struct). Most other languages would introduce new types as classes.
+.support_type : style {
+   color				 = light_blue
+   ace_scope			 = support.type
+   textmate_scope		 = support.type
+   pygments_scope		 = Name.Entity
+}
+
+# variable — variables. Not all languages allow easy identification (and thus markup) of these.
+.variable : style {
+   color				 = yellow
+   ace_scope			 = variable
+   textmate_scope		 = variable
+   pygments_scope		 = Name.Variable
+}
+
+# parameter — when the variable is declared as the parameter.
+.variable_parameter : style {
+   color				 = yellow
+   ace_scope			 = variable.parameter
+   textmate_scope		 = variable.parameter
+   pygments_scope		 = Name.Attribute
+}
+
+# end -- textmate focused scopes
+
+
+.punctuation : style {
+   color				 = violet
+   ace_scope			 = punctuation
+   textmate_scope		 = punctuation
+   pygments_scope		 = Punctuation
+}
+
+.parenthesis : style {
+   color				 = violet
+   ace_scope			 = keyword punctuation
+   textmate_scope		 = keyword punctuation
+   pygments_scope		 = Operator.Word
+}
+
+.whitespace : style {
+   ace_scope			 = whitespace
+   textmate_scope		 = whitespace
+   pygments_scope		 = Generic
+}
+
+# illegal — illegal, e.g. an ampersand or lower-than character in HTML (which is not part of an entity/tag).
+.invalid_illegal : style {
+   color				 = red
+   ace_scope			 = invalid.illegal
+   textmate_scope		 = invalid.illegal
+   pygments_scope		 = Generic.Error
+}
+
+}
+
+
+
+#################################################
+## Parse contexts
+#################################################
+
+contexts [] {
+
+##############################################
+## Main Context - Entry point context
+##############################################
+
+main : context {
+   : include "grammar" ;
+}
+
+
+grammar : context {
+   : include "MultiLineComment" ;
+   : include "SingleLineComment" ;
+   
+   : include "File" ;
+   
+   : pattern {
+	  regex			 \= ([^\s])
+	  styles []		  = .invalid_illegal;
+   }
+}
+
+
+File: context {
+	: include "AllocateSection";
+
+	// aufräumen
+	// : include "Type" ;
+	: include "MethodOrFieldDecl";
+
+	: include "Punctuation" ;
+}
+
+
+// For Mindustry / mindcode
+AllocateSection: context {
+	// : include "TypeMember";
+	: pattern {
+		regex			 \= (\ballocate\b)(\s*)(?:\b(stack in|heap in)\b)(\s*)($${__Variable})
+		styles []		  = .keyword_other, .whitespace, .keyword_other, .whitespace, .entity_name;
+	}
+}
+
+
+Type: context {
+	// Not used for mindcode, but it does not interfere
+	: include "MultiLineComment" ;
+	: include "SingleLineComment" ;
+
+	: include "TypeDecl";
+
+	: include "BracedTypeBody";
+}
+
+
+// Typen-Deklarationen
+TypeDecl: context {
+	: pattern {
+		regex			 \= ($${__commonModifier})(\s+)($${__Variable})
+		styles []		  = .storage_type, .whitespace, .entity_type;
+	}
+   
+	: include "InheritedDecl";
+	: include "ImplementsDecl";
+	: include "BracedTypeBody";
+}
+
+
+InheritedDecl: context {
+   : pattern {
+	  regex		  \= (\bextends\b)(\s+)($${__qualifiedName})
+	  styles []	   = .keyword_other, .whitespace, .entity_inherited_class ; 
+   }
+}
+
+
+ImplementsDecl: context {
+   : pattern {
+	  regex		  \= (\bimplements\b)
+	  styles []	   = .keyword_other ; 
+   }
+   : include "Punctuation";
+   : include "QualifiedName";
+}
+
+
+BracedTypeBody: context {
+   : inline_push {
+	  regex			 \= (\{)
+	  styles []		  = .parenthesis;
+	  : pop {
+		 regex		 \= (\})
+		 styles []	  = .parenthesis;
+	  }
+	  : include "TypeMember";
+   }
+}
+
+
+TypeMember: context {
+   : include "MultiLineComment" ;
+   : include "SingleLineComment" ;
+
+   : include "MethodOrFieldDecl";
+   : include "Type";
+}
+
+
+MethodOrFieldDecl: context {
+	: include "MethodDecl";
+	: include "FieldOrVarDecl";
+}
+
+
+// Feld oder Variable
+FieldOrVarDecl: context {
+
+	: include "MethodCall";
+
+	: pattern {
+		regex		  \= ($${__CONST}(?=\s*=))
+		styles []	   = .constant_var;
+	}
+	: pattern {
+		regex		  \= ($${__Variable}(?=\s*=))
+		styles []	   = .variable; 
+	}
+
+	// Mindustry Spielobjekt?
+	// @...
+	: pattern {
+		regex		  \= (@$${__Variable})
+		styles []	   = .support_type; 
+	}
+
+	: pattern {
+		regex		  \= ($${__Variable})
+		styles []	   = .variable;  // .invalid_illegal;
+	}
+
+	// would be nice, but too gernic, covers too keywords in Template expressions 
+	//	 : pattern {
+	//		regex		\= ($${__qualifiedName})(\s+)($${__Variable}(?!\s*\())
+	//		styles []	 = .entity_name, .whitespace, .variable; 
+	//	 }
+}
+
+// Alias: Function Declaration
+MethodDecl: context {
+	// matches: ReturnType Func (
+	: pattern {
+		regex		\= ($${__methodDecl})(\s+)($${__FuncName}(?=\())
+		styles []	 = .keyword_other, .whitespace, .entity_function; 
+	}
+
+	: include "Parameters";
+	: include "Expression";
+}
+
+
+// Alias: Function Call
+MethodCall: context {
+	// matches: ReturnType Func (
+	: pattern {
+		regex		\= ($${__FuncName}(?=\())
+		styles []	 = .entity_function; 
+	}
+
+	: include "Parameters";
+}
+
+
+Expression: context {
+	: include "MultiLineComment" ;
+	: include "SingleLineComment" ;
+	: include "ExpressionKeywords";
+	: include "Operators";
+
+	: include "MethodCall";
+	
+	: include "Punctuation";
+	: include "StringOrTemplateString";
+	: include "BracedExpression";
+	: include "ParenthesizedExpression";
+	: include "BracketizedExpression";
+	: include "QualifiedName";
+}
+
+
+BracedExpression:  context {
+   : inline_push {
+	  regex			 \= (\{)
+	  styles []		  = .parenthesis;
+	  : pop {
+		 regex		 \= (\})
+		 styles []	  = .parenthesis;
+	  }
+	  
+	  : include "Expression";
+   }
+}
+
+
+ParenthesizedExpression: context {
+   : inline_push {
+	  regex			 \= (\()
+	  styles []		  = .parenthesis;
+	  : pop {
+		 regex		 \= (\))
+		 styles []	  = .parenthesis;
+	  }
+	  : include "Expression";
+   }
+}
+
+
+BracketizedExpression: context {
+   : inline_push {
+	  regex			 \= (\[)
+	  styles []		  = .parenthesis;
+	  : pop {
+		 regex		 \= (\])
+		 styles []	  = .parenthesis;
+	  }
+	  : pattern {
+		 regex		 \= (\bit\b)
+		 styles []	  = .keyword ; 
+	  }
+	  : include "Expression";
+   }
+}
+
+
+ExpressionKeywords: context {
+	: pattern {
+		regex		  \= (\bwhile\b|\bif\b|\belse\b|\bcase\b|\bwhen\b|\bfor\b|\b\.\.\b|\b\.\.\.\b|\bend\b|\b==\b)
+		styles []	   = .keyword_control ; 
+	}
+	: pattern {
+		regex		  \= (\btrue\b|\bfalse\b|\bnull\b)
+		styles []	   = .constant_language ; 
+	}
+	: include "Number";
+	: include "FieldOrVarDecl";
+}
+
+
+Number: context {
+   : pattern { 
+	  regex		  \= ((?:0x[\dABCDEFabcdef]+[Ll]?)|\d+\.?\d]*[LlFfdD]?)
+	  styles []	   = .constant_numeric ;
+   }
+}
+
+
+// Parameter between ()
+Parameters: context {
+	: inline_push {
+		regex			 \= (\()
+		styles []		  = .parenthesis;
+		: pop {
+			regex		 \= (\))
+			styles []	  = .parenthesis;
+		}
+		
+		// matches: Variablename
+		: pattern {
+			regex		 \= (\s*)($${__Variable})
+			styles []	  = .whitespace, .variable; 
+		}
+		: include "Punctuation";
+   }
+}
+
+
+Punctuation: context {
+   : pattern { 
+	  regex		  \= (,|\,|:|;|\.\.\.|\|)
+	  styles []	   = .punctuation ;
+   }
+}
+
+
+Operators: context {
+   : pattern { 
+	  regex		  \= ($${__operators})
+	  styles []	   = .keyword_operator ;
+   }
+}
+
+
+QualifiedName : context {
+   : pattern {
+	  regex			 \= ($${__qualifiedName})
+	  styles []		  = .entity_name;
+   }
+}
+
+
+Name : context {
+   description = for ^ escaped names 
+   : pattern {
+	  regex		  \= ($${__Variable})
+	  styles []	   = .entity_name;
+   }
+}
+
+
+###########################################
+## Terminals
+###########################################
+
+SingleLineComment : context {
+   description		  = singleline comment
+   : pattern {
+	  regex			 \= (//.*)
+	  styles []		  = .comment_line_double_slash;
+   }
+}
+
+
+MultiLineComment : context {
+   description		  = multiline comment
+   : inline_push {
+	  regex			 \= (/\*)
+	  styles []		  = .comment_block;
+	  default_style	  = .comment_block
+	  : pop {
+		 regex		 \= (\*/)
+		 styles []	  = .comment_block;
+	  }
+   }
+}
+
+
+String : context {
+   description		 = quoted string
+   : inline_push {
+	  regex			 \= (\")
+	  styles []		  = .string_quoted_double;
+	  default_style	  = .string_quoted_double
+	  : pop {
+		 regex		 \= (\")
+		 styles []	  = .string_quoted_double;
+	  }
+   }
+   : inline_push {
+	  regex			 \= (\')
+	  styles []		  = .string_quoted_single;
+	  default_style	  = .string_quoted_single
+	  : pop {
+		 regex		 \= (\')
+		 styles []	  = .string_quoted_single;
+	  }
+   }
+}
+
+
+StringOrTemplateString: context {
+   :include "String";
+}
+
+
+}
