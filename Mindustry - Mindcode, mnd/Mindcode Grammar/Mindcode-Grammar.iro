@@ -30,11 +30,13 @@ textmate_compatible		= true
 ################################################################
 
 // Konstanten
-__CONST					\= (\b[_]?[A-Z][A-Z0-9_]*\b)
+__CONST					\= (\b[_A-Z][A-Z0-9_]*\b)
 
 // Variablen
-__Variable				\= \b_?(?:[a-zA-Z][\w]*)\b
-__FuncName				\= \b_?(?:[a-zA-Z][\w]*)\b
+// Globale Variablen beginnen mit $
+__GlobalVariable		\= (?:^|\s+)(?:\$[_a-zA-Z][\w]*)\b
+__Variable				\= \b(?:[_a-zA-Z][\w]*)\b
+__FuncName				\= \b(?:[_a-zA-Z][\w]*)\b
 
 // Name.Property
 __qualifiedName			\= $${__Variable}\.$${__Variable}
@@ -79,8 +81,8 @@ styles [] {
 # Const Variable
 .constant_var : style {
    color				 = light_yellow
-   ace_scope			 = variable
-   textmate_scope		 = Name.Variable.Global
+   ace_scope			 = constant.other
+   textmate_scope		 = constant.other
    pygments_scope		 = Name.Variable.Global
 }
 
@@ -273,6 +275,13 @@ styles [] {
    pygments_scope		 = Name.Variable
 }
 
+.globalVariable : style {
+   color				 = light_yellow
+   ace_scope			 = Name.Variable.Global
+   textmate_scope		 = Name.Variable.Global
+   pygments_scope		 = Name.Variable.Global
+}
+
 
 # Object.Property
 .qualifiedName : style {
@@ -417,6 +426,10 @@ FieldOrVarDecl: context {
 		regex		  \= ($${__Variable}(?=\s*=))
 		styles []	   = .variable;
 	}
+	: pattern {
+		regex		  \= ($${__GlobalVariable}(?=\s*=))
+		styles []	   = .globalVariable;
+	}
 
 	// Mindustry Spielobjekt?
 	// @...
@@ -424,13 +437,6 @@ FieldOrVarDecl: context {
 		regex		  \= (@$${__Variable}(?=\s*=))
 		styles []	   = .support_type;
 	}
-
-	/*
-	: pattern {
-		regex		  \= ($${__Variable})
-		styles []	   = .variable;	 // .invalid_illegal;
-	}
-	*/
 
 	// would be nice, but too gernic, covers too keywords in Template expressions 
 	//	 : pattern {
@@ -558,6 +564,10 @@ Variable: context {
 		regex		  \= ($${__CONST})
 		styles []	   = .constant_var;
 	}
+	: pattern {
+		regex		  \= ($${__GlobalVariable})
+		styles []	   = .globalVariable;
+	}
 	// @xxx
 	: pattern {
 		regex		  \= (@$${__Variable})
@@ -606,11 +616,6 @@ Parameters: context {
 			styles []	  = .whitespace, .qualifiedName;
 		}
 
-		// matches: Variablename
-		: pattern {
-			regex		 \= (\s*)($${__Variable})
-			styles []	  = .whitespace, .variable;
-		}
 		: include "Punctuation";
    }
 }
@@ -651,14 +656,6 @@ QualifiedName : context {
    }
 }
 
-
-Name : context {
-   description = for ^ escaped names 
-   : pattern {
-	  regex		  \= ($${__Variable})
-	  styles []	   = .entity_name;
-   }
-}
 
 
 ###########################################
