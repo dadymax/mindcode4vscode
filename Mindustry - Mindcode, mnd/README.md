@@ -1,4 +1,4 @@
-# Mindcode, an great compiler for the (very) annyoing Mindustry Logic
+# Mindcode, an great compiler for the (very annyoing) Mindustry Logic
 
 François Beausoleil created this useful compiler:
 
