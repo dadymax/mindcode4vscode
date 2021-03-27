@@ -1,6 +1,12 @@
 # mindcode README
 
-This is the README for your extension "mindcode". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "mindcode". 
+
+# Installation
+Copy it to:
+c:\Users\<user>\AppData\Local\Programs\Microsoft VS Code\resources\app\extensions\mindcode\
+
+
 
 ## Features
 
