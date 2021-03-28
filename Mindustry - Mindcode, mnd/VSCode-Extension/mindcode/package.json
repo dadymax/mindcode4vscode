@@ -1,34 +1,45 @@
 {
-    "name": "mindcode",
-    "displayName": "mindcode",
-    "description": "Mindcode Syntax for the Mindustry Game Language Compiler",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.54.0"
-    },
-    "categories": [
-        "Programming Languages"
-     "Themes"
-   ],
-    "contributes": {
-        "languages": [{
-            "id": "mindcode",
-            "aliases": ["mindcode", "mindcode"],
-            "extensions": [".mnd",".mindcode"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "mindcode",
-            "scopeName": "source.mindcode",
-            "path": "./syntaxes/mindcode.plist"
-        }],
-		"themes": [
-		  {
-			"id": "Default Dark+ Mindcode",
-			"label": "%darkPlusColorThemeLabel%",
-			"uiTheme": "vs-dark-mindcode",
-			"path": "./themes/dark_plus_mindcode.json"
-		  }]
-    }
+  "name": "mindcode",
+  "displayName": "mindcode",
+  "description": "Mindcode Syntax for the Mindustry Game Language Compiler",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.54.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Themes"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "mindcode",
+        "aliases": [
+          "mindcode",
+          "mindcode"
+        ],
+        "extensions": [
+          ".mnd",
+          ".mindcode"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mindcode",
+        "scopeName": "source.mindcode",
+        "path": "./syntaxes/mindcode.plist"
+      }
+    ],
+    "themes": [
+      {
+        "id": "Default Dark+ Mindcode",
+        "label": "%darkPlusMindcodeColorThemeLabel%",
+        "uiTheme": "vs-dark-mindcode",
+        "path": "./themes/dark_plus_mindcode.json"
+      }
+    ]
+  }
 }
 

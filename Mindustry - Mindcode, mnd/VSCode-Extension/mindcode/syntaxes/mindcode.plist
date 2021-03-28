@@ -39,7 +39,7 @@
       <array> 
         <dict>
           <key>match</key>
-          <string>(\ballocate\b)(\s*)(?:\b(stack in|heap in)\b)(\s*)(\b_?(?:[a-zA-Z][\w]*)\b)</string>
+          <string>(\ballocate\b)(\s*)(?:\b(stack in|heap in)\b)(\s*)(\b(?:[_a-zA-Z][\w]*)\b)</string>
           <key>captures</key>
           <dict>
             <key>1</key>
@@ -289,19 +289,25 @@
         </dict>
         <dict>
           <key>match</key>
-          <string>((\b[_]?[A-Z][A-Z0-9_]*\b)(?=\s*=))</string>
+          <string>((\b[_A-Z][A-Z0-9_]*\b)(?=\s*=))</string>
           <key>name</key>
-          <string>Name.Variable.Global.mindcode</string>
+          <string>constant.other.mindcode</string>
         </dict>
         <dict>
           <key>match</key>
-          <string>(\b_?(?:[a-zA-Z][\w]*)\b(?=\s*=))</string>
+          <string>(\b(?:[_a-zA-Z][\w]*)\b(?=\s*=))</string>
           <key>name</key>
           <string>variable.mindcode</string>
         </dict>
         <dict>
           <key>match</key>
-          <string>(@\b_?(?:[a-zA-Z][\w]*)\b(?=\s*=))</string>
+          <string>((?:^|\s+)(?:\$[_a-zA-Z][\w]*)\b(?=\s*=))</string>
+          <key>name</key>
+          <string>Name.Variable.Global.mindcode</string>
+        </dict>
+        <dict>
+          <key>match</key>
+          <string>((?:^|\s+)@(?:[a-z][a-z]*)(?:\-(?:[a-z][a-z]*))?\b)(?=\s*=)</string>
           <key>name</key>
           <string>support.type.mindcode</string>
         </dict>
@@ -357,7 +363,7 @@
       <array> 
         <dict>
           <key>match</key>
-          <string>(\b_?(?:[a-zA-Z][\w]*)\b(?=\())</string>
+          <string>(\b(?:[_a-zA-Z][\w]*)\b(?=\())</string>
           <key>name</key>
           <string>entity.name.function.mindcode</string>
         </dict>
@@ -373,7 +379,7 @@
       <array> 
         <dict>
           <key>match</key>
-          <string>(\bdef\b)(\s+)(\b_?(?:[a-zA-Z][\w]*)\b(?=\())</string>
+          <string>(\bdef\b)(\s+)(\b(?:[_a-zA-Z][\w]*)\b(?=\())</string>
           <key>captures</key>
           <dict>
             <key>1</key>
@@ -548,7 +554,7 @@
         </dict>
         <dict>
           <key>match</key>
-          <string>(\s*)(\b_?(?:[a-zA-Z][\w]*)\b\.\b_?(?:[a-zA-Z][\w]*)\b)</string>
+          <string>(\s*)((?:[_a-zA-Z][\w]*)\.(?:[a-zA-Z][\w]*))</string>
           <key>captures</key>
           <dict>
             <key>1</key>
@@ -560,23 +566,6 @@
             <dict>
               <key>name</key>
               <string>variable.other.member.mindcode</string>
-            </dict>
-          </dict>
-        </dict>
-        <dict>
-          <key>match</key>
-          <string>(\s*)(\b_?(?:[a-zA-Z][\w]*)\b)</string>
-          <key>captures</key>
-          <dict>
-            <key>1</key>
-            <dict>
-              <key>name</key>
-              <string>whitespace.mindcode</string>
-            </dict>
-            <key>2</key>
-            <dict>
-              <key>name</key>
-              <string>variable.mindcode</string>
             </dict>
           </dict>
         </dict>
@@ -649,7 +638,7 @@
       <array> 
         <dict>
           <key>match</key>
-          <string>(\b_?(?:[a-zA-Z][\w]*)\b\.\b_?(?:[a-zA-Z][\w]*)\b)</string>
+          <string>((?:[_a-zA-Z][\w]*)\.(?:[a-zA-Z][\w]*))</string>
           <key>name</key>
           <string>entity.name.mindcode</string>
         </dict>
@@ -739,25 +728,31 @@
       <array> 
         <dict>
           <key>match</key>
-          <string>((\b[_]?[A-Z][A-Z0-9_]*\b))</string>
+          <string>((\b[_A-Z][A-Z0-9_]*\b))</string>
+          <key>name</key>
+          <string>constant.other.mindcode</string>
+        </dict>
+        <dict>
+          <key>match</key>
+          <string>((?:^|\s+)(?:\$[_a-zA-Z][\w]*)\b)</string>
           <key>name</key>
           <string>Name.Variable.Global.mindcode</string>
         </dict>
         <dict>
           <key>match</key>
-          <string>(@\b_?(?:[a-zA-Z][\w]*)\b)</string>
+          <string>((?:^|\s+)@(?:[a-z][a-z]*)(?:\-(?:[a-z][a-z]*))?\b)</string>
           <key>name</key>
           <string>support.type.mindcode</string>
         </dict>
         <dict>
           <key>match</key>
-          <string>(\b_?(?:[a-zA-Z][\w]*)\b)</string>
+          <string>(\b(?:[_a-zA-Z][\w]*)\b)</string>
           <key>name</key>
           <string>variable.mindcode</string>
         </dict>
         <dict>
           <key>match</key>
-          <string>(\b_?(?:[a-zA-Z][\w]*)\b\.\b_?(?:[a-zA-Z][\w]*)\b)</string>
+          <string>((?:[_a-zA-Z][\w]*)\.(?:[a-zA-Z][\w]*))</string>
           <key>name</key>
           <string>support.type.mindcode</string>
         </dict>

@@ -1,4 +1,3 @@
-
 ## This file can be used in:
 ## https://eeyo.io/iro/
 ## to design and debug the grammar
@@ -49,7 +48,11 @@ __Variable				\= \b(?:[_a-zA-Z][\w]*)\b
 __FuncName				\= \b(?:[_a-zA-Z][\w]*)\b
 
 // Name.Property
-__qualifiedName			\= $${__Variable}\.$${__Variable}
+__qualifiedName			\= (?:[_a-zA-Z][\w]*)\.(?:[a-zA-Z][\w]*)
+
+// Mindustry Game-Object
+// @memory-cell
+__GameObject			\= (?:^|\s+)@(?:[a-z][a-z]*)(?:\-(?:[a-z][a-z]*))?\b
 
 __logicOps				\= !|(&&)|(\|\|)|(and)|(or)
 __compareOps			\= (!=)|(===)|(==)|(<=)|(>=)|<|>
@@ -441,10 +444,10 @@ FieldOrVarDecl: context {
 		styles []	   = .globalVariable;
 	}
 
-	// Mindustry Spielobjekt?
-	// @...
+   // Mindustry Game-Object
+   // @memory-cell
 	: pattern {
-		regex		  \= (@$${__Variable}(?=\s*=))
+		regex		  \= ($${__GameObject})(?=\s*=)
 		styles []	   = .support_type;
 	}
 
@@ -578,9 +581,10 @@ Variable: context {
 		regex		  \= ($${__GlobalVariable})
 		styles []	   = .globalVariable;
 	}
-	// @xxx
+   // Mindustry Game-Object
+   // @memory-cell
 	: pattern {
-		regex		  \= (@$${__Variable})
+		regex		  \= ($${__GameObject})
 		styles []	   = .support_type;
 	}
 	// Variable
@@ -588,8 +592,7 @@ Variable: context {
 		regex		  \= ($${__Variable})
 		styles []	   = .variable;
 	}
-	// Mindustry Spielobjekt
-	// @...
+	// Object.Property
 	: pattern {
 		regex		  \= ($${__qualifiedName})
 		styles []	   = .support_type;
