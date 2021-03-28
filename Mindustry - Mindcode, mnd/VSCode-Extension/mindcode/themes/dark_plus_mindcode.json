@@ -122,6 +122,8 @@
 			"name": "Variable and parameter name",
 			"scope": [
 				"variable",
+				// tomtom
+				"entity.name.mindcode",
 				"meta.definition.variable.name",
 				"support.variable",
 				"entity.name.variable"
@@ -144,9 +146,9 @@
 			}
 		},
 		{
+			// tomtom
 			"name": "keyword.operator.logical.mindcode",
 			"scope": [
-				// tomtom
 				"keyword.operator.logical.mindcode"
 			],
 			"settings": {

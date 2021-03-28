@@ -7,12 +7,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 
-## [1.0.0] - 210328
+## [0.0.1] - 210328
 ### Added
 - Initial release
 
-
-
+## [0.0.3] - 210328
+### Modified
+- Syntax highlighting adjusted
 
 
 

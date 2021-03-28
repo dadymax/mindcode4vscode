@@ -1,6 +1,6 @@
 # mindcode README
 
-The Game [**Mindustry**] (https://store.steampowered.com/app/1127400/Mindustry) offers a Scripting Logic which is somewhat similar to assembler, which was popular 1/4 century ago. Therefore, it is very annoying.
+The Game [Mindustry] (https://store.steampowered.com/app/1127400/Mindustry) offers a Scripting Logic which is somewhat similar to assembler, which was popular 1/4 century ago. Therefore, it is very annoying.
 
 That is why it is ingenious that François Beausoleil created the very useful compiler named `Mindcode`:
 
