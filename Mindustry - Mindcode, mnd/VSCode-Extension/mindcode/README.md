@@ -1,7 +1,17 @@
 # mindcode README
 
+<<<<<<< HEAD
 This package contains an VSCode Extension to highlight the Mindcode source code.
 Mindcode is a compiler for the Game Mindustry and it's prgrammable processors / logic.
+=======
+This is the README for your extension "mindcode". 
+
+# Installation
+Copy it to:
+c:\Users\<user>\AppData\Local\Programs\Microsoft VS Code\resources\app\extensions\mindcode\
+
+
+>>>>>>> origin/master
 
 François Beausoleil created the very useful compiler mindcode:
 
