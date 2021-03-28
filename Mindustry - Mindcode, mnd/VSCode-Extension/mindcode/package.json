@@ -1,5 +1,10 @@
 {
   "name": "mindcode",
+  "publisher": "TomSchi",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/jig-opensource/Iro-Grammars.git"
+  },
   "displayName": "mindcode",
   "description": "Mindcode Syntax for the Mindustry Game Language Compiler",
   "version": "0.0.1",

@@ -1,25 +1,17 @@
 # mindcode README
 
-<<<<<<< HEAD
-This package contains an VSCode Extension to highlight the Mindcode source code.
-Mindcode is a compiler for the Game Mindustry and it's prgrammable processors / logic.
-=======
-This is the README for your extension "mindcode". 
+The Game [**Mindustry**] (https://store.steampowered.com/app/1127400/Mindustry) offers a Scripting Logic which is somewhat similar to assembler, which was popular 1/4 century ago. Therefore, it is very annoying.
 
-# Installation
-Copy it to:
-c:\Users\<user>\AppData\Local\Programs\Microsoft VS Code\resources\app\extensions\mindcode\
-
-
->>>>>>> origin/master
-
-François Beausoleil created the very useful compiler mindcode:
+That is why it is ingenious that François Beausoleil created the very useful compiler named `Mindcode`:
 
 * [His product presentation](https://www.reddit.com/r/Mindustry/comments/m60qli/mindcode_a_higher_level_language_that_compiles/)
 * [Synax](https://github.com/francois/mindcode/blob/main/SYNTAX.markdown)
 * [Examples and the online Compiler](https://mindcode.herokuapp.com)
 
 
+# Installation
+Copy it to:
+c:\Users\<user>\AppData\Local\Programs\Microsoft VS Code\resources\app\extensions\mindcode\
 
 ## Features
 

@@ -1,0 +1,14 @@
+
+
+Deploy
+	cd 'c:\GitWork\GitLab\OpenSource\Iro-Grammars\src\Mindustry - Mindcode, mnd\VSCode-Extension\mindcode'
+	vsce package
+	vsce login tomschi
+	# Token - KeePass:
+	# MSMarketplacePublisher@jig.ch
+	vsce publish
+
+
+
+
+
