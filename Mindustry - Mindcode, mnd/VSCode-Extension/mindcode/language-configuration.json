@@ -7,6 +7,13 @@
     },
     // symbols used as brackets
     "brackets": [
+        ["def", "end"],
+        ["if", "end"],
+		// Does not work in vscode
+        // ["else", "end"],
+        ["while", "end"],
+        ["when", "end"],
+        ["for", "end"],
         ["{", "}"],
         ["[", "]"],
         ["(", ")"]
@@ -28,3 +35,4 @@
         ["'", "'"]
     ]
 }
+

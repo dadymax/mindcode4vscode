@@ -6,4 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+
+## [1.0.0] - 210328
+### Added
 - Initial release
+
+
+
+
+
+
+#### !i
+
+https://keepachangelog.com/de/1.0.0/
+
